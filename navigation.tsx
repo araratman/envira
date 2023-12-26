@@ -163,7 +163,7 @@ export default function Navigation() {
 
   return (
     <>
-      {/* {!user.id ? (
+      {!user.id ? (
         <AuthScreens theme={MyTheme} />
       ) : (
         <NavigationContainer
@@ -180,22 +180,7 @@ export default function Navigation() {
             />
           }
         ></NavigationContainer>
-      )} */}
-
-      <NavigationContainer
-        theme={MyTheme}
-        children={
-          <Stack.Navigator
-            children={
-              <Stack.Screen
-                options={{ headerShown: false }}
-                name="MainScreens"
-                component={MainScreens}
-              />
-            }
-          />
-        }
-      ></NavigationContainer>
+      )}
     </>
   );
 }

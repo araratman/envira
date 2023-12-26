@@ -22,9 +22,6 @@ export default function Results({ navigation, route }: any) {
   const { mode } = useAppSelector((state) => state.mode);
 
 
-  useEffect(()=>{
-    console.log(filteredData);
-  },[filteredData])
 
   return (
     <View style={{ backgroundColor: "white", flex: 1 }}>
