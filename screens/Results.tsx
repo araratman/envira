@@ -20,8 +20,11 @@ export default function Results({ navigation, route }: any) {
   const [filteredData, setFilteredData] = useState(route.params)
   const { t } = useTranslation();
   const { mode } = useAppSelector((state) => state.mode);
+  const {products} = useAppSelector((state) => state.products)
 
-
+useEffect(()=>{
+    setFilteredData(products)
+},[products])
 
   return (
     <View style={{ backgroundColor: "white", flex: 1 }}>

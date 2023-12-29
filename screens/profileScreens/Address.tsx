@@ -16,7 +16,7 @@ interface Region {
 }
 
 export default function Address({ navigation }: any) {
-  const [initialRegion, setInitialRegion] = useState<Region | null>(null);
+  const [initialRegion, setInitialRegion]:any = useState<Region | null>(null);
   const [city, setCity]: any = useState();
   const { t } = useTranslation();
   const { mode } = useAppSelector((state) => state.mode);
@@ -90,16 +90,15 @@ export default function Address({ navigation }: any) {
           </Text>
         </View>
       </View>
-      {initialRegion ? (
         <View style={{ flex: 1 }}>
           <MapView
           userInterfaceStyle={mode ? "dark" : "light"}
             onPress={(e) => handleMapPress(e)}
             customMapStyle={getMapStyle(mode)}
             style={{ flex: 1 }}
-            initialRegion={initialRegion}
+            initialRegion={initialRegion && initialRegion}
           >
-            <Marker coordinate={initialRegion} title="Your Location" />
+            {initialRegion && <Marker coordinate={initialRegion && initialRegion} title="Your Location" />}
           </MapView>
           <View style={{ flex: 1.5 }}>
             <View
@@ -216,9 +215,6 @@ export default function Address({ navigation }: any) {
             </View>
           </View>
         </View>
-      ) : (
-        <Text>Loading...</Text>
-      )}
     </View>
   );
 }

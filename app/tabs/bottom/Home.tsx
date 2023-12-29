@@ -58,14 +58,14 @@ export default function Home({ navigation }: any) {
           >
             <Image
               source={{
-                uri: user.avatar,
+                uri: user?.avatar,
               }}
               style={{ width: 60, height: 60, borderRadius: 30 }}
             />
             <View>
-              <Text style={{ color: "silver" }}>{user.role}</Text>
+              <Text style={{ color: "silver" }}>{user?.role}</Text>
               <Text style={{ fontWeight: "bold", fontSize: 20, color: mode ? "white" : "black", }}>
-                {user.name}
+                {user?.name}
               </Text>
             </View>
           </View>

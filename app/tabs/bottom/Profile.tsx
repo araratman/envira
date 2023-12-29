@@ -12,6 +12,7 @@ import { useAppDispatch, useAppSelector } from "../../../state/hooks";
 import { useTranslation } from "react-i18next";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getMode } from "../../../state/features/mode/modeApi";
+import { logOut } from "../../../state/features/user/userSlice";
 
 export default function Profile({ navigation }: any) {
   const { user } = useAppSelector((state) => state.user);
@@ -84,9 +85,9 @@ export default function Profile({ navigation }: any) {
     setIsEnabled(mode);
   }, [mode]);
 
-  const selectOption = (el: any) => {
+  const selectOption = async (el: any) => {
     el.id == 11
-      ? ""
+      ? (await AsyncStorage.removeItem('user'), dispatch(logOut())) 
       : el.id == 7
       ? toggleSwitch()
       : navigation.navigate(el.component);

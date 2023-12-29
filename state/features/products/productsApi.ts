@@ -12,10 +12,11 @@ export const getProducts = createAsyncThunk(
 
 export const filterProducts = createAsyncThunk(
     "get/filteredproducts",
-    async (price: any) => {
+    async (price: any) => { 
         const { data } = price.category ? 
         await myaxios.get(`https://api.escuelajs.co/api/v1/products/?price_min=${price.min}&price_max=${price.max}&categoryId=${price.category}`) 
         : await myaxios.get(`https://api.escuelajs.co/api/v1/products/?price_min=${price.min}&price_max=${price.max}`)
+        
         return data
 
     }

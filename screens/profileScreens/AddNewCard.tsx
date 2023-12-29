@@ -5,6 +5,8 @@ import {
   Image,
   StyleSheet,
   TextInput,
+  ImageBackground,
+  ScrollView,
 } from "react-native";
 import React, { useState } from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -15,6 +17,9 @@ import { useAppSelector } from "../../state/hooks";
 export default function AddNewCard({ navigation }: any) {
   const [isCalendarVisible, setCalendarVisible] = useState(false);
   const [calendarValue, setCalendarValue] = useState("");
+  const [creditCardNumber, setCreditCardNumber] = useState("");
+  const [creditCardName, setCreditCardName] = useState('')
+  const [creditCardDate, setCreditCardDate] = useState()
   const openCalendar = () => {
     setCalendarVisible(true);
   };
@@ -24,15 +29,38 @@ export default function AddNewCard({ navigation }: any) {
   };
 
   const onDayPress = (day: any) => {
-    setCalendarValue(day.dateString);
+    const regexPattern = /^(\d{4})-(\d{2})-(\d{2})$/;
+    const transformedDate = day.toString().replace(regexPattern, "$1/$2");
+    console.log(day);
+    setCalendarValue(`${day?.year}/${day?.month}`);
     closeCalendar();
+  };
+
+
+  const formatCreditCardNumber = (input: any) => {
+    const numericInput = input.replace(/\D/g, "");
+    const formattedInput = numericInput.replace(
+      /(\d{0,4})(\d{0,4})(\d{0,4})(\d{0,4})/,
+      (match: any, p1: any, p2: any, p3: any, p4: any) => {
+        let formattedString = `${p1} ${p2} ${p3} ${p4}`;
+        return formattedString;
+      }
+    );
+    const truncatedInput = formattedInput.slice(0, 19);
+
+    return truncatedInput;
+  };
+
+  const handleCreditCardNumberChange = (input: any) => {
+    const formattedInput = formatCreditCardNumber(input);
+    setCreditCardNumber(formattedInput);
   };
 
   const { mode } = useAppSelector((state) => state.mode);
 
   const { t } = useTranslation();
   return (
-    <View
+    <ScrollView
       style={{
         paddingHorizontal: 20,
         backgroundColor: mode ? "#181A20" : "white",
@@ -55,9 +83,19 @@ export default function AddNewCard({ navigation }: any) {
           }}
         >
           <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Ionicons name={"arrow-back-outline"} size={32} color={mode ? "white" : "black"} />
+            <Ionicons
+              name={"arrow-back-outline"}
+              size={32}
+              color={mode ? "white" : "black"}
+            />
           </TouchableOpacity>
-          <Text style={{ fontSize: 20, fontWeight: "bold", color: mode ? "white" : "black", }}>
+          <Text
+            style={{
+              fontSize: 20,
+              fontWeight: "bold",
+              color: mode ? "white" : "black",
+            }}
+          >
             {t("Add New Card")}
           </Text>
         </View>
@@ -67,17 +105,44 @@ export default function AddNewCard({ navigation }: any) {
           color={mode ? "white" : "black"}
         />
       </View>
-      <Image
+      <View
         style={{
+          backgroundColor: "#232323",
           width: "100%",
           height: 250,
-          objectFit: "contain",
+          borderRadius: 25,
           marginTop: 20,
+          padding: 30,
         }}
-        source={{
-          uri: "https://m.media-amazon.com/images/G/02/cbccasin/master/amazon__platinum_NEW_Nov19-scaled._CB660815294_.png",
-        }}
-      />
+      >
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <Text style={{ color: "white", fontWeight: "bold",fontSize: 18, }}>Mocard</Text>
+          <Text style={{ color: "white", fontWeight: "bold",fontSize: 18, }}>amazon</Text>
+        </View>
+        <TextInput
+          editable={false}
+          placeholder={creditCardNumber}
+          placeholderTextColor={"white"}
+          style={{ fontSize: 20, marginVertical: 50 }}
+        />
+        <View style={{flexDirection:'row', alignItems:'center', gap:20}}>
+          <View style={{width: '60%'}}>
+            <Text style={{ color: "white",fontSize: 12  }}>Card Holder name</Text>
+            <TextInput style={{width: '100%'}} placeholderTextColor={'white'} placeholder={creditCardName.toUpperCase()} editable={false} />
+          </View>
+          <View style={{width: '40%'}}>
+            <Text style={{ color: "white", fontSize: 12  }}>Expiry date</Text>
+            <TextInput placeholderTextColor={'white'} dataDetectorTypes={'calendarEvent'} placeholder={calendarValue} editable={false}  />
+          </View>
+          <Image source={{ uri: "/" }} />
+        </View>
+      </View>
       <View
         style={{
           flexDirection: "column",
@@ -86,41 +151,74 @@ export default function AddNewCard({ navigation }: any) {
         }}
       >
         <View>
-          <Text style={{ fontWeight: "bold", fontSize: 18, color: mode ? "white" : "black", }}>
+          <Text
+            style={{
+              fontWeight: "bold",
+              fontSize: 18,
+              color: mode ? "white" : "black",
+            }}
+          >
             {t("Card Name")}
           </Text>
-          <View style={mode ? styles.passwordContainerDark : styles.passwordContainer}>
+          <View
+            style={
+              mode ? styles.passwordContainerDark : styles.passwordContainer
+            }
+          >
             <TextInput
               style={mode ? styles.inputStyleDark : styles.inputStyle}
               autoCorrect={false}
               placeholder="Andrew Ainsley"
-              placeholderTextColor={mode ? "white" : "#000"}
+              placeholderTextColor={mode ? "white" : "silver"}
+              onChangeText={(e)=>setCreditCardName(e)}
             />
           </View>
-          <Text style={{ fontWeight: "bold", fontSize: 18, color: mode ? "white" : "black", }}>
+          <Text
+            style={{
+              fontWeight: "bold",
+              fontSize: 18,
+              color: mode ? "white" : "black",
+            }}
+          >
             {t("Card Number")}
           </Text>
-          <View style={mode ? styles.passwordContainerDark : styles.passwordContainer}>
+          <View
+            style={
+              mode ? styles.passwordContainerDark : styles.passwordContainer
+            }
+          >
             <TextInput
               style={mode ? styles.inputStyleDark : styles.inputStyle}
               autoCorrect={false}
+              keyboardType="numeric"
+              maxLength={16}
               placeholder="2672 2341 1267 2345"
-              placeholderTextColor={mode ? "white" : "#000"}
+              placeholderTextColor={mode ? "white" : "silver"}
+              onChangeText={handleCreditCardNumberChange}
             />
           </View>
           <View style={{ flexDirection: "row", width: "100%", gap: 10 }}>
             <View style={{ width: "50%" }}>
-              <Text style={{ fontWeight: "bold", fontSize: 18, color: mode ? "white" : "black", }}>
+              <Text
+                style={{
+                  fontWeight: "bold",
+                  fontSize: 18,
+                  color: mode ? "white" : "black",
+                }}
+              >
                 {t("Expiry Date")}
               </Text>
-              <View style={mode ? styles.passwordContainerDark : styles.passwordContainer}>
+              <View
+                style={
+                  mode ? styles.passwordContainerDark : styles.passwordContainer
+                }
+              >
                 <TextInput
                   style={mode ? styles.inputStyleDark : styles.inputStyle}
                   autoCorrect={false}
                   placeholder="12/27/1995"
-                  placeholderTextColor={mode ? "white" : "#000"}
+                  placeholderTextColor={mode ? "white" : "silver"}
                   value={calendarValue}
-
                 />
                 <TouchableOpacity onPress={openCalendar}>
                   <Ionicons
@@ -146,13 +244,27 @@ export default function AddNewCard({ navigation }: any) {
               )}
             </View>
             <View style={{ width: "50%" }}>
-              <Text style={{ fontWeight: "bold", fontSize: 18, color: mode ? "white" : "black", }}>CVV</Text>
-              <View style={mode ? styles.passwordContainerDark : styles.passwordContainer}>
+              <Text
+                style={{
+                  fontWeight: "bold",
+                  fontSize: 18,
+                  color: mode ? "white" : "black",
+                }}
+              >
+                CVV
+              </Text>
+              <View
+                style={
+                  mode ? styles.passwordContainerDark : styles.passwordContainer
+                }
+              >
                 <TextInput
                   style={mode ? styles.inputStyleDark : styles.inputStyle}
                   autoCorrect={false}
                   placeholder="264"
-                  placeholderTextColor={mode ? "white" : "#000"}
+                  maxLength={3}
+                  keyboardType="numeric"
+                  placeholderTextColor={mode ? "white" : "silver"}
                 />
               </View>
             </View>
@@ -174,7 +286,7 @@ export default function AddNewCard({ navigation }: any) {
           <Text style={{ color: mode ? "black" : "white" }}>{t("Add")}</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -201,10 +313,9 @@ const styles = StyleSheet.create({
   },
   inputStyle: {
     flex: 1,
-    color:'white'
   },
   inputStyleDark: {
     flex: 1,
-    color: 'white'
+    color: "white",
   },
 });

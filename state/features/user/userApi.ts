@@ -1,6 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import myaxios from "../../../myAxios";
 import { database } from "../../../db/db";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 export const getUserThunk = createAsyncThunk(
@@ -27,6 +28,10 @@ export const getUserThunk = createAsyncThunk(
           Authorization: `Bearer ${res.data.access_token}`,
         },
       })
+      if(data){
+        await AsyncStorage.setItem('user', JSON.stringify(data))
+      }
+      
       return data
     }
   // }
@@ -36,7 +41,21 @@ export const addNewUserThunk = createAsyncThunk(
   "add/user",
   async (body:any) => {
     const {data}: any = await myaxios.post('users', body) 
+    if(data){
+      await AsyncStorage.setItem('user', JSON.stringify(data))
+    }
     return data
+  }
+)
+
+
+export const getLogginUser = createAsyncThunk(
+  'get/loggineduser',
+  async () =>{
+    const user = await AsyncStorage.getItem('user') 
+    if(user){
+      return JSON.parse(user)
+    }
   }
 )
 

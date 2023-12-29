@@ -23,6 +23,8 @@ import AddNewCard from "./screens/profileScreens/AddNewCard";
 import { useAppDispatch, useAppSelector } from "./state/hooks";
 import { getLanguage } from "./helper";
 import { getMode } from "./state/features/mode/modeApi";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getLogginUser } from "./state/features/user/userApi";
 
 const Stack = createNativeStackNavigator();
 
@@ -132,8 +134,10 @@ export default function Navigation() {
   const { mode } = useAppSelector((state) => state.mode);
   const dispatch = useAppDispatch();
 
+
   useEffect(() => {
     dispatch(getMode());
+    dispatch(getLogginUser())
     getLanguage();
   }, []);
 
@@ -163,7 +167,7 @@ export default function Navigation() {
 
   return (
     <>
-      {!user.id ? (
+      {!user?.id ? (
         <AuthScreens theme={MyTheme} />
       ) : (
         <NavigationContainer

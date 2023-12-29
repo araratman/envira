@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { addNewUserThunk, getUserThunk } from "./userApi";
+import { addNewUserThunk, getLogginUser, getUserThunk } from "./userApi";
 
 
 const initialState: any = {
@@ -9,7 +9,11 @@ const initialState: any = {
 const userSlice = createSlice({
   name: "user",
   initialState,
-  reducers: {},
+  reducers: {
+    logOut: (state)=>{
+        state.user = {}
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getUserThunk.pending, () => {
@@ -29,7 +33,16 @@ const userSlice = createSlice({
       .addCase(addNewUserThunk.fulfilled, (state, action)=>{
         state.user = action.payload
       })
+      .addCase(getLogginUser.pending, ()=>{
+          console.log('await user');
+          
+      })
+      .addCase(getLogginUser.fulfilled, (state, action)=>{
+        state.user = action.payload
+      })
   },
 });
+
+export const {logOut} = userSlice.actions
 
 export default userSlice.reducer;
