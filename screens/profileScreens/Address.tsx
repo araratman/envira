@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Checkbox } from "react-native-paper";
 import { useAppSelector } from "../../state/hooks";
+import Animated, { SlideInDown, SlideOutDown } from "react-native-reanimated";
 
 interface Region {
   latitude: number;
@@ -18,35 +19,37 @@ interface Region {
 export default function Address({ navigation }: any) {
   const [initialRegion, setInitialRegion]:any = useState<Region | null>(null);
   const [city, setCity]: any = useState();
+  const [openModal, setOpenModal] = useState(true)
   const { t } = useTranslation();
   const { mode } = useAppSelector((state) => state.mode);
-  useEffect(() => {
-    const getCurrentLocation = async () => {
-      try {
-        const { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== "granted") {
-          console.log("Permission to access location was denied");
-          return;
-        }
-
-        const location = await Location.getCurrentPositionAsync({});
-        const { latitude, longitude } = location.coords;
-        setInitialRegion({
-          latitude,
-          longitude,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        });
-        let response = await Location.reverseGeocodeAsync({
-          latitude,
-          longitude,
-        });
-        response && setCity(response[0]);
-      } catch (error: any) {
-        console.log("Error getting location:", error.message);
+  
+  const getCurrentLocation = async () => {
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        console.log("Permission to access location was denied");
+        return;
       }
-    };
 
+      const location = await Location.getCurrentPositionAsync({});
+      const { latitude, longitude } = location.coords;
+      setInitialRegion({
+        latitude,
+        longitude,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+      });
+      let response = await Location.reverseGeocodeAsync({
+        latitude,
+        longitude,
+      });
+      response && setCity(response[0]);
+    } catch (error: any) {
+      console.log("Error getting location:", error.message);
+    }
+  };
+  
+  useEffect(() => {
     getCurrentLocation();
   }, []);
 
@@ -61,6 +64,7 @@ export default function Address({ navigation }: any) {
     let response = await Location.reverseGeocodeAsync(coordinate);
     response && setCity(response[0]);
     setInitialRegion(data);
+    setOpenModal(true)
   };
 
   return (
@@ -100,120 +104,142 @@ export default function Address({ navigation }: any) {
           >
             {initialRegion && <Marker coordinate={initialRegion && initialRegion} title="Your Location" />}
           </MapView>
-          <View style={{ flex: 1.5 }}>
-            <View
-              style={{
-                backgroundColor: mode ? "#181A20" : "white",
-                position: "absolute",
-                bottom: 0,
-                left: 0,
-                right: 0,
-                top: -20,
-                borderTopLeftRadius: 30,
-                borderTopRightRadius: 30,
-              }}
-            >
+         {
+          openModal &&  <Animated.View
+          style={{
+            backgroundColor: mode ? "#181A20" : "transparent",
+            zIndex: 21,
+            height: 420,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            position: "absolute",
+          }}
+          exiting={SlideOutDown.springify()}
+          entering={SlideInDown.springify().damping(100)}
+        >
+          <View style={{ flex: 1 }}>
               <View
                 style={{
-                  width: "100%",
-                  flexDirection: "row",
-                  justifyContent: "center",
-                  paddingTop: 2,
-                  height: 20,
-                  marginTop: 10,
+                  backgroundColor: mode ? "#181A20" : "white",
+                  position: "absolute",
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  top: -20,
+                  borderTopLeftRadius: 30,
+                  borderTopRightRadius: 30,
                 }}
               >
                 <View
-                  style={{ width: 50, height: 3, backgroundColor: "#E0E0E0" }}
+                  style={{
+                    width: "100%",
+                    flexDirection: "row",
+                    justifyContent: "center",
+                    paddingTop: 2,
+                    height: 20,
+                    marginTop: 10,
+                  }}
+                >
+                  <TouchableOpacity onPress={()=>setOpenModal(false)}
+                    style={{ width: '100%', flexDirection:'row', justifyContent:'center', paddingVertical:10}}
+                  >
+                    <View style={{ width: 50, height: 3, backgroundColor: "#E0E0E0" }}>
+
+                    </View>
+                  </TouchableOpacity>
+                </View>
+              </View>
+              <Text
+                style={{
+                  textAlign: "center",
+                  fontSize: 20,
+                  fontWeight: "bold",
+                  marginTop: 10,
+                  color: mode ? "white" : "black",
+                }}
+              >
+                Address Details
+              </Text>
+              <View style={{ paddingHorizontal: 20 }}>
+                <View
+                  style={{
+                    width: "100%",
+                    height: 1,
+                    backgroundColor: "#E0E0E0",
+                    marginVertical: 15,
+                  }}
                 ></View>
+                <Text style={{ fontWeight: "bold", fontSize: 18, color: mode ? "white" : "black", }}>
+                  Name Address
+                </Text>
+                <View
+                  style={{
+                    padding: 15,
+                    width: "100%",
+                    backgroundColor: mode ? '#1F222A' : '#FAFAFA',
+                    borderRadius: 15,
+                    marginVertical: 15,
+                  }}
+                >
+                  <Text style={{ fontWeight: "600", color: mode ? "white" : "black", }}>Apartment</Text>
+                </View>
+                <Text style={{ fontWeight: "bold", fontSize: 18, color: mode ? "white" : "black", }}>
+                  Address Detalis
+                </Text>
+                <View
+                  style={{
+                    padding: 15,
+                    width: "100%",
+                    backgroundColor: mode ? '#1F222A' : '#FAFAFA',
+                    borderRadius: 15,
+                    marginVertical: 15,
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <Text style={{ fontWeight: "600", color: mode ? "white" : "black", }}>
+                    {city?.region && city.region + ","}{" "}
+                    {city?.street && city.street + ","}{" "}
+                    {city?.streetNumber && city.streetNumber}
+                  </Text>
+                  <TouchableOpacity onPress={()=>getCurrentLocation()}>
+                  <Ionicons name={"location"} size={22} color={mode ? "white" : "black"} />
+                  </TouchableOpacity>
+                </View>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: 6,
+                    marginBottom: 10,
+                  }}
+                >
+                  <Checkbox status={"checked"} color={mode ? "white" : "black"} />
+                  <Text style={{ fontWeight: "600", color: mode ? "white" : "black", }}>
+                    Make this as the default address
+                  </Text>
+                </View>
+                <TouchableOpacity
+                  style={{
+                    width: "100%",
+                    paddingVertical: 20,
+                    backgroundColor:  mode ? "white" : "black",
+                    flexDirection: "row",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    borderRadius: 50,
+                    marginBottom: 20,
+                  }}
+                  onPress={()=> navigation.navigate("Profile")}
+                >
+                  <Text style={{  color: mode ? "black" : "white", }}>{t("Add")}</Text>
+                </TouchableOpacity>
               </View>
             </View>
-            <Text
-              style={{
-                textAlign: "center",
-                fontSize: 20,
-                fontWeight: "bold",
-                marginTop: 10,
-                color: mode ? "white" : "black",
-              }}
-            >
-              Address Details
-            </Text>
-            <View style={{ paddingHorizontal: 20 }}>
-              <View
-                style={{
-                  width: "100%",
-                  height: 1,
-                  backgroundColor: "#E0E0E0",
-                  marginVertical: 15,
-                }}
-              ></View>
-              <Text style={{ fontWeight: "bold", fontSize: 18, color: mode ? "white" : "black", }}>
-                Name Address
-              </Text>
-              <View
-                style={{
-                  padding: 15,
-                  width: "100%",
-                  backgroundColor: mode ? '#1F222A' : '#FAFAFA',
-                  borderRadius: 15,
-                  marginVertical: 15,
-                }}
-              >
-                <Text style={{ fontWeight: "600", color: mode ? "white" : "black", }}>Apartment</Text>
-              </View>
-              <Text style={{ fontWeight: "bold", fontSize: 18, color: mode ? "white" : "black", }}>
-                Address Detalis
-              </Text>
-              <View
-                style={{
-                  padding: 15,
-                  width: "100%",
-                  backgroundColor: mode ? '#1F222A' : '#FAFAFA',
-                  borderRadius: 15,
-                  marginVertical: 15,
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
-                <Text style={{ fontWeight: "600", color: mode ? "white" : "black", }}>
-                  {city?.region && city.region + ","}{" "}
-                  {city?.street && city.street + ","}{" "}
-                  {city?.streetNumber && city.streetNumber}
-                </Text>
-                <Ionicons name={"location"} size={22} color={mode ? "white" : "black"} />
-              </View>
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  gap: 6,
-                  marginBottom: 10,
-                }}
-              >
-                <Checkbox status={"checked"} color={mode ? "white" : "black"} />
-                <Text style={{ fontWeight: "600", color: mode ? "white" : "black", }}>
-                  Make this as the default address
-                </Text>
-              </View>
-              <TouchableOpacity
-                style={{
-                  width: "100%",
-                  paddingVertical: 20,
-                  backgroundColor:  mode ? "white" : "black",
-                  flexDirection: "row",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  borderRadius: 50,
-                  marginBottom: 20,
-                }}
-                onPress={()=> navigation.navigate("Profile")}
-              >
-                <Text style={{  color: mode ? "black" : "white", }}>{t("Add")}</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
+        </Animated.View>
+         }
         </View>
     </View>
   );

@@ -130,12 +130,14 @@ export default function Slider({ styles, isGoBack, navigation }: any) {
         onScroll={handleScroll}
       />
       {isGoBack && (
-        <TouchableOpacity
+        <View style={{  position: "absolute", backgroundColor: 'rgba(255,255,255,1)', width: '100%', paddingTop: 30, paddingLeft:20, paddingBottom:10 }}>
+          <TouchableOpacity
           onPress={() => navigation.goBack()}
-          style={{ position: "absolute", left: 30, top: 30 }}
+          // style={{  left: 30, top: 30 }}
         >
           <Ionicons name={"arrow-back-outline"} size={32} color={"black"} />
         </TouchableOpacity>
+        </View>
       )}
       <View
         style={{

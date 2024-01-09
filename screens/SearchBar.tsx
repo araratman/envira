@@ -12,10 +12,13 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { useTranslation } from "react-i18next";
 import { useAppSelector } from "../state/hooks";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { SearchModal } from "../components/SearchModal";
 
 export default function SearchBar({ navigation }: any) {
 
   const [editedSearch, setEditedSearch]: any = useState([]);
+  const [filteredData, setFilteredData] = useState('')
+  const [isOpen, setIsOpen]:any = useState(false);
   const [searchData, setSearchData] = useState([
     { id: 12, key: "Handmade" },
     { id: 13, key: "Snage Skin Bag" },
@@ -97,6 +100,7 @@ export default function SearchBar({ navigation }: any) {
       style={{
         paddingHorizontal: 20,
         backgroundColor: mode ? "#181A20" : "white",
+        flex:1
       }}
     >
       <View
@@ -113,11 +117,13 @@ export default function SearchBar({ navigation }: any) {
           placeholderTextColor={mode ? "silver" : "black"}
           autoFocus={true}
         />
-        <Ionicons
-          name={"options-outline"}
-          size={20}
-          color={mode ? "white" : "black"}
-        />
+       <TouchableOpacity onPress={() => setIsOpen(!isOpen)}>
+              <Ionicons
+                name={"options-outline"}
+                size={20}
+                color={mode ? "white" : "black"}
+              />
+            </TouchableOpacity>
       </View>
       <View>
         <View
@@ -185,6 +191,23 @@ export default function SearchBar({ navigation }: any) {
             })}
         </ScrollView>
       </View>
+      {isOpen && (
+          <TouchableOpacity
+            style={{
+              position: "absolute",
+              flex: 1,
+              zIndex: 20,
+              backgroundColor: "black",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              opacity: 0.5,
+            }}
+            onPress={() => setIsOpen(!isOpen)}
+          ></TouchableOpacity>
+        )}
+        {isOpen && <SearchModal setIsOpen={setIsOpen} setFilteredData={setFilteredData} isSearchBar={true} navigation={navigation}/>}
     </View>
   );
 }
