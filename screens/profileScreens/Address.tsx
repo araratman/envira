@@ -109,7 +109,7 @@ export default function Address({ navigation }: any) {
           style={{
             backgroundColor: mode ? "#181A20" : "transparent",
             zIndex: 21,
-            height: 420,
+            height: 450,
             left: 0,
             right: 0,
             bottom: 0,
@@ -126,30 +126,30 @@ export default function Address({ navigation }: any) {
                   bottom: 0,
                   left: 0,
                   right: 0,
-                  top: -20,
+                  top: 0,
                   borderTopLeftRadius: 30,
                   borderTopRightRadius: 30,
                 }}
               >
-                <View
-                  style={{
-                    width: "100%",
-                    flexDirection: "row",
-                    justifyContent: "center",
-                    paddingTop: 2,
-                    height: 20,
-                    marginTop: 10,
-                  }}
-                >
-                  <TouchableOpacity onPress={()=>setOpenModal(false)}
-                    style={{ width: '100%', flexDirection:'row', justifyContent:'center', paddingVertical:10}}
-                  >
-                    <View style={{ width: 50, height: 3, backgroundColor: "#E0E0E0" }}>
-
-                    </View>
-                  </TouchableOpacity>
-                </View>
               </View>
+                  <View
+                    style={{
+                      width: "100%",
+                      flexDirection: "row",
+                      justifyContent: "center",
+                      paddingTop: 2,
+                      height: 20,
+                      marginTop: 10,
+                    }}
+                  >
+                    <TouchableOpacity onPress={()=>setOpenModal(false)}
+                      style={{ width: '100%', flexDirection:'row', justifyContent:'center'}}
+                    >
+                      <View style={{ width: 50, height: 3, backgroundColor: "#E0E0E0" }}>
+
+                      </View>
+                    </TouchableOpacity>
+                  </View>
               <Text
                 style={{
                   textAlign: "center",
@@ -238,7 +238,56 @@ export default function Address({ navigation }: any) {
                 </TouchableOpacity>
               </View>
             </View>
-        </Animated.View>
+        </Animated.View>    
+         }
+         {
+              !openModal &&  <Animated.View
+              style={{
+                backgroundColor: mode ? "#181A20" : "transparent",
+                zIndex: 21,
+                height: 50,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                position: "absolute",
+              }}
+              exiting={SlideOutDown.springify()}
+              entering={SlideInDown.springify().damping(100)}
+            >
+              <View style={{ flex: 1 }}>
+                  <View
+                    style={{
+                      backgroundColor: mode ? "#181A20" : "white",
+                      position: "absolute",
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      top: -20,
+                      borderTopLeftRadius: 30,
+                      borderTopRightRadius: 30,
+                    }}
+                  >
+                    <View
+                      style={{
+                        width: "100%",
+                        flexDirection: "row",
+                        justifyContent: "center",
+                        paddingTop: 2,
+                        height: 20,
+                        marginTop: 10,
+                      }}
+                    >
+                      <TouchableOpacity onPress={()=>setOpenModal(true)}
+                        style={{ width: '100%', flexDirection:'row', justifyContent:'center', paddingVertical:10}}
+                      >
+                        <View style={{ width: 80, height: 3, backgroundColor: "#E0E0E0" }}>
+    
+                        </View>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </View>
+            </Animated.View>    
          }
         </View>
     </View>

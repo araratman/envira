@@ -49,7 +49,9 @@ useEffect(()=>{
               placeholderTextColor={mode ? "silver" : "black"}
               placeholder="Search"
             />
-            <TouchableOpacity onPress={() => setIsOpen(!isOpen)}>
+            <TouchableOpacity onPress={() => { Keyboard.dismiss(),setTimeout(() => {
+         setIsOpen(!isOpen)
+       }, 100)}}>
               <Ionicons
                 name={"options-outline"}
                 size={20}
