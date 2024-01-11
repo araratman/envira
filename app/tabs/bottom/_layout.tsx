@@ -1,11 +1,11 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import Cart from "./Cart";
-import Profile from "./Profile";
-import Home from "./Home";
-import Orders from "./Orders";
-import Wallet from "./Wallet";
+import Cart from "../../../screens/Cart";
+import Profile from "../../../screens/Profile";
+import Home from "../../../screens/Home";
+import Orders from "../../../screens/Orders";
+import Wallet from "../../../screens/Wallet";
 import { useAppSelector } from "../../../state/hooks";
 
 const Tab = createBottomTabNavigator();

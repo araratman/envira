@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { RadioButton } from "react-native-paper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import i18n from "../../i18n.config";
+import i18n from "../../constants/i18n.config";
 import { useTranslation } from "react-i18next";
 import { useAppSelector } from "../../state/hooks";
 

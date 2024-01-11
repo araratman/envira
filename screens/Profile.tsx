@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
+  Animated,
   Image,
   ScrollView,
   Switch,
@@ -8,17 +9,18 @@ import {
   View,
 } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { useAppDispatch, useAppSelector } from "../../../state/hooks";
+import { useAppDispatch, useAppSelector } from "../state/hooks";
 import { useTranslation } from "react-i18next";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { getMode } from "../../../state/features/mode/modeApi";
-import { logOut } from "../../../state/features/user/userSlice";
+import { getMode } from "../state/features/mode/modeApi";
+import { logOut } from "../state/features/user/userSlice";
 
 export default function Profile({ navigation }: any) {
   const { user } = useAppSelector((state) => state.user);
   const { mode } = useAppSelector((state) => state.mode);
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
+  const [offsety, setOffsety] = useState(0)
 
   const editList = [
     {
@@ -93,6 +95,34 @@ export default function Profile({ navigation }: any) {
       : navigation.navigate(el.component);
   };
 
+  // const handleScroll = (event:any) => {
+    
+  //     changeImageHeight()
+    
+   
+  // };
+
+  const animatedHeight:any = useRef(new Animated.Value(160)).current;
+  
+  const changeImageHeight = (event: any) => {
+    const offsetY = event.nativeEvent.contentOffset.y;
+      if(offsetY >= 30 ){
+        Animated.timing(animatedHeight, {
+          toValue: 80, 
+          duration: 80,
+          useNativeDriver: false,
+        }).start()
+      }else if(offsetY < 30){
+        Animated.timing(animatedHeight, {
+          toValue: 160, 
+          duration: 80,
+          useNativeDriver: false,
+        }).start();
+      }
+ 
+  };
+
+
   return (
     <View
       style={{
@@ -128,10 +158,10 @@ export default function Profile({ navigation }: any) {
           alignItems: "center",
         }}
       >
-        <View>
+        <View style={{alignItems:'center'}}>
           <View>
-            <Image
-              style={{ borderRadius: 80, width: 160, height: 160 }}
+            <Animated.Image
+              style={{ borderRadius: 80, width: animatedHeight, height: animatedHeight  }}
               source={{
                 uri: user.avatar,
               }}
@@ -139,7 +169,7 @@ export default function Profile({ navigation }: any) {
             <Ionicons
               style={{ position: "absolute", right: 10, bottom: 0 }}
               name={"create"}
-              size={42}
+              size={24}
               color={mode ? "white" : "black"}
             />
           </View>
@@ -174,7 +204,7 @@ export default function Profile({ navigation }: any) {
           marginVertical: 20,
         }}
       ></View>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView onScroll={changeImageHeight} showsVerticalScrollIndicator={false}>
         {editList.map((el: any, index: any) => {
           return (
             <TouchableOpacity key={index + 1} onPress={() => selectOption(el)}>

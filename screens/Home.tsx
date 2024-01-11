@@ -11,10 +11,10 @@ import {
 } from "react-native";
 import React, { useEffect } from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import Slider from "../../../components/Slider";
+import Slider from "../components/Slider";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { useAppDispatch, useAppSelector } from "../../../state/hooks";
-import { getProducts } from "../../../state/features/products/productsApi";
+import { useAppDispatch, useAppSelector } from "../state/hooks";
+import { getProducts } from "../state/features/products/productsApi";
 import { useTranslation } from "react-i18next";
 
 export default function Home({ navigation }: any) {
@@ -22,16 +22,23 @@ export default function Home({ navigation }: any) {
   const { user } = useAppSelector((state) => state.user);
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
-  const filters = [{ id: 0, item: "All", icon: "" }, ...categories];
+  const filters = [{ id: 0, name: "All", image: "" }, ...categories];
   const { mode } = useAppSelector((state) => state.mode);
   useEffect(() => {
     dispatch(getProducts(0));
   }, []);
 
-  
   const filter = (id: any) => {
     dispatch(getProducts(id));
   };
+
+  function truncateText(text:any, maxLength:any) {
+    if (text?.length > maxLength) {
+      return text.substring(0, maxLength) + '...';
+    } else {
+      return text;
+    }
+  }
 
   return (
     <View
@@ -64,7 +71,13 @@ export default function Home({ navigation }: any) {
             />
             <View>
               <Text style={{ color: "silver" }}>{user?.role}</Text>
-              <Text style={{ fontWeight: "bold", fontSize: 20, color: mode ? "white" : "black", }}>
+              <Text
+                style={{
+                  fontWeight: "bold",
+                  fontSize: 20,
+                  color: mode ? "white" : "black",
+                }}
+              >
                 {user?.name}
               </Text>
             </View>
@@ -72,22 +85,38 @@ export default function Home({ navigation }: any) {
           <View
             style={{ flexDirection: "row", justifyContent: "center", gap: 10 }}
           >
-            <Ionicons name="notifications-outline" size={30} color={mode ? "white" : "#000"} />
-            <Ionicons name="heart-outline" size={30} color={mode ? "white" : "#000"} />
+            <Ionicons
+              name="notifications-outline"
+              size={30}
+              color={mode ? "white" : "#000"}
+            />
+            <Ionicons
+              name="heart-outline"
+              size={30}
+              color={mode ? "white" : "#000"}
+            />
           </View>
         </View>
         <TouchableOpacity onPress={() => navigation.navigate("SearchBar")}>
-          <View style={mode ? styles.passwordContainerDark : styles.passwordContainer}>
+          <View
+            style={
+              mode ? styles.passwordContainerDark : styles.passwordContainer
+            }
+          >
             <Ionicons name="search-outline" size={20} color={"silver"} />
             <TextInput
               style={mode ? styles.inputStyleDark : styles.inputStyle}
               autoCorrect={false}
               secureTextEntry={false}
               placeholder="Search"
-              placeholderTextColor={mode ? 'silver' : 'black'}
+              placeholderTextColor={mode ? "silver" : "black"}
               editable={false}
             />
-            <Ionicons name={"options-outline"} size={20} color={mode ? "white" : "black"} />
+            <Ionicons
+              name={"options-outline"}
+              size={20}
+              color={mode ? "white" : "black"}
+            />
           </View>
         </TouchableOpacity>
         <View
@@ -98,54 +127,54 @@ export default function Home({ navigation }: any) {
             marginVertical: 15,
           }}
         >
-          <Text style={{ fontWeight: "bold", fontSize: 20,color: mode ? "white" : "black", }}>
+          <Text
+            style={{
+              fontWeight: "bold",
+              fontSize: 20,
+              color: mode ? "white" : "black",
+            }}
+          >
             {t("Special Offers")}
           </Text>
-          <Text style={{ fontWeight: "bold", fontSize: 18,color: mode ? "white" : "black", }}>
+          <Text
+            style={{
+              fontWeight: "bold",
+              fontSize: 18,
+              color: mode ? "white" : "black",
+            }}
+          >
             {t("See All")}
           </Text>
         </View>
         <Slider styles={styles} />
-        <View
-          style={{
-            flexDirection: "row",
-            flexWrap: "wrap",
-            justifyContent: "center",
-            gap: 10,
-            marginVertical: 15,
-          }}
-        >
-          {categories.map((el: any, index: any) => {
-            return (
-              <View
-                key={index}
-                style={{
-                  width: 80,
-                  justifyContent: "center",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  marginVertical: 10,
-                }}
-              >
-                <View
-                  style={{
-                    backgroundColor: mode ? '#1F222A' : "#EBEBEB",
-                    flex: 1,
-                    justifyContent: "center",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    borderRadius: 45,
-                    width: 60,
-                    height: 60,
-                  }}
-                >
-                  <Icon name={el.icon} size={28} color={mode ? "white" : "black"} />
-                </View>
-                <Text style={{ color: mode ? "white" : "black",}}>{el.item}</Text>
-              </View>
-            );
-          })}
-        </View>
+
+        <FlatList
+        showsHorizontalScrollIndicator={false}
+        horizontal={true}
+          data={categories}
+          renderItem={({ item }: any) => (
+            <View
+            key={item.id}
+            style={{
+              width: 80,
+              justifyContent: "center",
+              flexDirection: "column",
+              alignItems: "center",
+              marginVertical: 20,
+            }}
+          >
+              <Image
+                style={{ borderRadius: 45, width: 60, height: 60 }}
+                source={{ uri:item.image }}
+              />
+            <Text style={{ color: mode ? "white" : "black" }}>
+              {truncateText(item.name, 5)}
+            </Text>
+          </View>
+          )}
+          
+          keyExtractor={(item) => item.id.toString()}
+        />
         <View
           style={{
             width: "100%",
@@ -155,8 +184,12 @@ export default function Home({ navigation }: any) {
             marginBottom: 12,
           }}
         >
-          <Text style={{ fontWeight: "bold",color: mode ? "white" : "black", }}>{t("Most Popular")}</Text>
-          <Text style={{ fontWeight: "bold",color: mode ? "white" : "black", }}>{t("See All")}</Text>
+          <Text style={{ fontWeight: "bold", color: mode ? "white" : "black" }}>
+            {t("Most Popular")}
+          </Text>
+          <Text style={{ fontWeight: "bold", color: mode ? "white" : "black" }}>
+            {t("See All")}
+          </Text>
         </View>
         <FlatList
           data={filters}
@@ -172,10 +205,14 @@ export default function Home({ navigation }: any) {
                   paddingHorizontal: 15,
                   marginRight: 15,
                   borderRadius: 25,
-                  borderColor: mode ? 'white' : 'black'
+                  borderColor: mode ? "white" : "black",
                 }}
               >
-                <Text style={{ fontWeight: "600",color: mode ? "white" : "black" }}>{item.item}</Text>
+                <Text
+                  style={{ fontWeight: "600", color: mode ? "white" : "black" }}
+                >
+                  {item.name}
+                </Text>
               </View>
             </TouchableOpacity>
           )}
@@ -271,16 +308,27 @@ export default function Home({ navigation }: any) {
                           style={{
                             paddingHorizontal: 10,
                             paddingVertical: 2,
-                            backgroundColor: mode ? '#1F222A' : "#ECECEC",
+                            backgroundColor: mode ? "#1F222A" : "#ECECEC",
                             borderRadius: 5,
                           }}
                         >
-                          <Text style={{ fontSize: 12, color: mode ? "white" : "black", }}>
+                          <Text
+                            style={{
+                              fontSize: 12,
+                              color: mode ? "white" : "black",
+                            }}
+                          >
                             {el.sold} {t("sold")}
                           </Text>
                         </View>
                       </View>
-                      <Text style={{ fontSize: 16, fontWeight: "bold", color: mode ? "white" : "black", }}>
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          fontWeight: "bold",
+                          color: mode ? "white" : "black",
+                        }}
+                      >
                         ${el.price}
                       </Text>
                     </View>
@@ -320,7 +368,7 @@ const styles = StyleSheet.create({
   },
   inputStyleDark: {
     flex: 1,
-    color: 'white'
+    color: "white",
   },
   row: {
     flex: 1,

@@ -20,9 +20,7 @@ export default function SearchBar({ navigation }: any) {
   const [filteredData, setFilteredData] = useState('')
   const [isOpen, setIsOpen]:any = useState(false);
   const [searchData, setSearchData] = useState([
-    { id: 12, key: "Handmade" },
-    { id: 13, key: "Snage Skin Bag" },
-    { id: 14, key: "Snake Skin Bagggg" },
+    { id: 12, key: "Handmade" }
   ]);
   const { t } = useTranslation();
   const { products } = useAppSelector((state) => state.products);
@@ -34,7 +32,8 @@ export default function SearchBar({ navigation }: any) {
 
   async function getSearchData() {
     const data = await AsyncStorage.getItem("searchData");
-    data && setSearchData(JSON.parse(data));
+    data && (setSearchData(JSON.parse(data)), setEditedSearch(JSON.parse(data)))
+    
   }
 
   const submitInputEdit = async (e: any) => {
@@ -103,6 +102,30 @@ export default function SearchBar({ navigation }: any) {
         flex:1
       }}
     >
+        <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          marginTop: 55,
+          alignItems: "center",
+        }}
+      >
+        <View
+          style={{
+            flexDirection: "row",
+            gap: 15,
+            alignItems: "center",
+          }}
+        >
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Ionicons
+              name={"arrow-back-outline"}
+              size={32}
+              color={mode ? "white" : "black"}
+            />
+          </TouchableOpacity>
+        </View>
+      </View>
       <View
         style={mode ? styles.passwordContainerDark : styles.passwordContainer}
       >
@@ -111,6 +134,7 @@ export default function SearchBar({ navigation }: any) {
           onSubmitEditing={(e) => submitInputEdit(e)}
           onChangeText={(e) => onChangeText(e)}
           style={mode ? styles.inputStyleDark : styles.inputStyle}
+          onFocus={()=>getSearchData() }
           autoCorrect={false}
           secureTextEntry={false}
           placeholder="Search"
@@ -223,7 +247,7 @@ const styles = StyleSheet.create({
     gap: 10,
     backgroundColor: "#FAFAFA",
     borderRadius: 10,
-    marginTop: "15%",
+    marginTop: "5%",
   },
   passwordContainerDark: {
     flexDirection: "row",
@@ -233,7 +257,7 @@ const styles = StyleSheet.create({
     gap: 10,
     backgroundColor: "#1F222A",
     borderRadius: 10,
-    marginTop: "15%",
+    marginTop: "5%",
   },
   inputStyle: {
     flex: 1,

@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit"
-import { filterProducts, getProducts } from "./productsApi"
+import { filterProducts, getCategories, getProducts } from "./productsApi"
 
 const initialState = {
     categories: [
@@ -33,6 +33,12 @@ const productsSlice = createSlice({
         .addCase(filterProducts.fulfilled, (state, action)=>{
                     state.products = action.payload
                     
+        })
+        .addCase(getCategories.pending, ()=>{
+
+        })
+        .addCase(getCategories.fulfilled, (state, action)=>{
+            state.categories = action.payload
         })
     }
 })

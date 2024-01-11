@@ -35,6 +35,30 @@ useEffect(()=>{
         }}
       >
         <View style={{ paddingHorizontal: 20 }}>
+        <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          marginTop: 55,
+          alignItems: "center",
+        }}
+      >
+        <View
+          style={{
+            flexDirection: "row",
+            gap: 15,
+            alignItems: "center",
+          }}
+        >
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Ionicons
+              name={"arrow-back-outline"}
+              size={32}
+              color={mode ? "white" : "black"}
+            />
+          </TouchableOpacity>
+        </View>
+      </View>
           <View
             style={
               mode ? styles.passwordContainerDark : styles.passwordContainer
@@ -238,7 +262,7 @@ const styles = StyleSheet.create({
     gap: 10,
     backgroundColor: "#FAFAFA",
     borderRadius: 10,
-    marginTop: "15%",
+    marginTop: "5%",
   },
   passwordContainerDark: {
     flexDirection: "row",
@@ -248,7 +272,7 @@ const styles = StyleSheet.create({
     gap: 10,
     backgroundColor: "#1F222A",
     borderRadius: 10,
-    marginTop: "15%",
+    marginTop: "5%",
   },
   inputStyle: {
     flex: 1,

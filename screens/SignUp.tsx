@@ -108,6 +108,7 @@ export default function SignUp({ navigation }: any) {
                     onBlur={handleBlur("email")}
                     value={values.email}
                     placeholderTextColor={mode ? 'silver' : 'black'}
+                    inputMode="email"
                   />
                 </View>
                 <View style={mode ? styles.passwordContainerDark : styles.passwordContainer}>

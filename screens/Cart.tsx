@@ -6,7 +6,7 @@ export default function Cart() {
 
   return (
     <View style={{flex:1}}>
-        <Image style={{width: 30, height: 30}} source={require('../../../assets/images/landing.jpg')} />
+        <Image style={{width: 30, height: 30}} source={require('../assets/images/landing.jpg')} />
     </View>
   )
 }

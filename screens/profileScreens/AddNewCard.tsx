@@ -31,7 +31,6 @@ export default function AddNewCard({ navigation }: any) {
   const onDayPress = (day: any) => {
     const regexPattern = /^(\d{4})-(\d{2})-(\d{2})$/;
     const transformedDate = day.toString().replace(regexPattern, "$1/$2");
-    console.log(day);
     setCalendarValue(`${day?.year}/${day?.month}`);
     closeCalendar();
   };

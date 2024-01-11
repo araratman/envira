@@ -21,10 +21,11 @@ import PrivacyPolicy from "./screens/profileScreens/PrivacyPolicy";
 import Security from "./screens/profileScreens/Security";
 import AddNewCard from "./screens/profileScreens/AddNewCard";
 import { useAppDispatch, useAppSelector } from "./state/hooks";
-import { getLanguage } from "./helper";
+import { getLanguage } from "./constants/helper";
 import { getMode } from "./state/features/mode/modeApi";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getLogginUser } from "./state/features/user/userApi";
+import { getCategories } from "./state/features/products/productsApi";
 
 const Stack = createNativeStackNavigator();
 
@@ -138,6 +139,7 @@ export default function Navigation() {
   useEffect(() => {
     dispatch(getMode());
     dispatch(getLogginUser())
+    dispatch(getCategories())
     getLanguage();
   }, []);
 

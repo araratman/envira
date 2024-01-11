@@ -22,10 +22,12 @@ export const SearchModal = React.memo(
     const [minPrice, setMinPrice] = useState(5);
     const [maxPrice, setMaxPrice] = useState(300);
     const [category, setCategory]: any = useState(null);
+    const [sort, setSort]: any = useState(null);
+    const [rating, setRating]: any = useState(null);
     const { t } = useTranslation();
     const { mode } = useAppSelector((state) => state.mode);
     const { categories, products } = useAppSelector((state) => state.products);
-    const filters = [{ id: 0, item: "All", icon: "" }, ...categories];
+    const filters = [{ id: 0, name: "All", image: "" }, ...categories];
     const width = Dimensions.get("window").width;
     const dispatch = useAppDispatch();
 
@@ -57,7 +59,7 @@ export const SearchModal = React.memo(
         filterProducts({ min: minPrice, max: maxPrice, category: category })
       );
       isSearchBar
-        ? navigation.navigate("Results",products)
+        ? navigation.navigate("Results", products)
         : (setFilteredData(products), setIsOpen(false));
     };
 
@@ -84,7 +86,7 @@ export const SearchModal = React.memo(
             borderTopRightRadius: 25,
           }}
         >
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => setIsOpen(false)}>
             <View
               style={{
                 width: "100%",
@@ -163,7 +165,7 @@ export const SearchModal = React.memo(
                             : "black",
                         }}
                       >
-                        {item.item}
+                        {item.name}
                       </Text>
                     </TouchableOpacity>
                   </View>
@@ -237,16 +239,31 @@ export const SearchModal = React.memo(
                       borderRadius: 25,
                       height: 35,
                       borderColor: mode ? "white" : "black",
+                      backgroundColor: mode
+                        ? sort == item.id
+                          ? "white"
+                          : "black"
+                        : sort == item.id
+                        ? "black"
+                        : "white",
                     }}
                   >
-                    <Text
-                      style={{
-                        fontWeight: "600",
-                        color: mode ? "white" : "black",
-                      }}
-                    >
-                      {item.filter}
-                    </Text>
+                    <TouchableOpacity onPress={() => setSort(item.id)}>
+                      <Text
+                        style={{
+                          fontWeight: "600",
+                          color: mode
+                            ? sort == item.id
+                              ? "black"
+                              : "white"
+                            : sort == item.id
+                            ? "white"
+                            : "black",
+                        }}
+                      >
+                        {item.filter}
+                      </Text>
+                    </TouchableOpacity>
                   </View>
                 )}
                 horizontal={true}
@@ -267,7 +284,8 @@ export const SearchModal = React.memo(
                 showsHorizontalScrollIndicator={false}
                 keyExtractor={({ item }: any) => item}
                 renderItem={({ item }: any) => (
-                  <View
+                  <TouchableOpacity
+                  onPress={()=> setRating(item.id)}
                     style={{
                       borderWidth: 2,
                       paddingVertical: 5,
@@ -279,22 +297,43 @@ export const SearchModal = React.memo(
                       gap: 3,
                       alignItems: "center",
                       borderColor: mode ? "white" : "black",
+                      backgroundColor: mode
+                        ? rating == item.id
+                          ? "white"
+                          : "black"
+                        : rating == item.id
+                        ? "black"
+                        : "white",
                     }}
                   >
                     <Icon
                       name="star"
                       size={16}
-                      color={mode ? "white" : "black"}
+                      color={
+                        mode
+                          ? rating == item.id
+                            ? "black"
+                            : "white"
+                          : rating == item.id
+                          ? "white"
+                          : "black"
+                      }
                     />
                     <Text
                       style={{
                         fontWeight: "600",
-                        color: mode ? "white" : "black",
+                        color: mode
+                          ? rating == item.id
+                            ? "black"
+                            : "white"
+                          : rating == item.id
+                          ? "white"
+                          : "black",
                       }}
                     >
                       {item.rating}
                     </Text>
-                  </View>
+                  </TouchableOpacity>
                 )}
                 horizontal={true}
                 pagingEnabled={true}

@@ -76,6 +76,7 @@ export default function SignIn({ navigation }: any) {
                   onChangeText={handleChange("email")}
                   onBlur={handleBlur("email")}
                   value={values.email}
+                  inputMode="email"
                 />
               </View>
               <View style={mode ? styles.passwordContainerDark : styles.passwordContainer}>

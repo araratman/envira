@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import myaxios from "../../../myAxios";
+import myaxios from "../../../constants/myAxios";
 import { database } from "../../../db/db";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 

@@ -1,13 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import MapView, { Marker } from "react-native-maps";
 import { View, Text, TouchableOpacity } from "react-native";
 import * as Location from "expo-location";
-import getMapStyle from "../../helper";
+import getMapStyle from "../../constants/helper";
 import { useTranslation } from "react-i18next";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Checkbox } from "react-native-paper";
 import { useAppSelector } from "../../state/hooks";
 import Animated, { SlideInDown, SlideOutDown } from "react-native-reanimated";
+import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 interface Region {
   latitude: number;
@@ -17,12 +19,12 @@ interface Region {
 }
 
 export default function Address({ navigation }: any) {
-  const [initialRegion, setInitialRegion]:any = useState<Region | null>(null);
+  const [initialRegion, setInitialRegion]: any = useState<Region | null>(null);
   const [city, setCity]: any = useState();
-  const [openModal, setOpenModal] = useState(true)
+  const [openModal, setOpenModal] = useState(true);
   const { t } = useTranslation();
   const { mode } = useAppSelector((state) => state.mode);
-  
+
   const getCurrentLocation = async () => {
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
@@ -36,8 +38,8 @@ export default function Address({ navigation }: any) {
       setInitialRegion({
         latitude,
         longitude,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
+        latitudeDelta: 0.0021,
+        longitudeDelta: 0.0021,
       });
       let response = await Location.reverseGeocodeAsync({
         latitude,
@@ -48,7 +50,7 @@ export default function Address({ navigation }: any) {
       console.log("Error getting location:", error.message);
     }
   };
-  
+
   useEffect(() => {
     getCurrentLocation();
   }, []);
@@ -57,68 +59,84 @@ export default function Address({ navigation }: any) {
     const { coordinate } = event.nativeEvent;
     const data = {
       ...coordinate,
-      latitudeDelta: 0.0922,
-      longitudeDelta: 0.0421,
+      latitudeDelta: 0.0021,
+      longitudeDelta: 0.0021,
     };
 
     let response = await Location.reverseGeocodeAsync(coordinate);
     response && setCity(response[0]);
     setInitialRegion(data);
-    setOpenModal(true)
   };
 
+
+  const sheetRef = useRef<BottomSheet>(null);
+  const snapPoints = ["60%","5%","60%"];
+
   return (
-    <View style={{ flex: 1, backgroundColor: mode ? "#181A20" : "white"}}>
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          marginTop: 55,
-          marginBottom: 20,
-          alignItems: "center",
-        }}
-      >
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <View style={{ flex: 1, backgroundColor: mode ? "#181A20" : "white" }}>
         <View
           style={{
-            paddingHorizontal: 20,
             flexDirection: "row",
-            gap: 15,
+            justifyContent: "space-between",
+            marginTop: 55,
+            marginBottom: 20,
             alignItems: "center",
           }}
         >
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Ionicons name={"arrow-back-outline"} size={32} color={ mode ? "white" : "black"} />
-          </TouchableOpacity>
-          <Text style={{ fontSize: 20, fontWeight: "bold",  color: mode ? "white" : "black", }}>
-            {t("Add New Address")}
-          </Text>
+          <View
+            style={{
+              paddingHorizontal: 20,
+              flexDirection: "row",
+              gap: 15,
+              alignItems: "center",
+            }}
+          >
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+              <Ionicons
+                name={"arrow-back-outline"}
+                size={32}
+                color={mode ? "white" : "black"}
+              />
+            </TouchableOpacity>
+            <Text
+              style={{
+                fontSize: 20,
+                fontWeight: "bold",
+                color: mode ? "white" : "black",
+              }}
+            >
+              {t("Add New Address")}
+            </Text>
+          </View>
         </View>
-      </View>
         <View style={{ flex: 1 }}>
           <MapView
-          userInterfaceStyle={mode ? "dark" : "light"}
+            userInterfaceStyle={mode ? "dark" : "light"}
             onPress={(e) => handleMapPress(e)}
             customMapStyle={getMapStyle(mode)}
             style={{ flex: 1 }}
             initialRegion={initialRegion && initialRegion}
+            region={initialRegion}
           >
-            {initialRegion && <Marker coordinate={initialRegion && initialRegion} title="Your Location" />}
+            {initialRegion && (
+              <Marker
+                coordinate={initialRegion && initialRegion}
+                title="Your Location"
+              />
+            )}
           </MapView>
-         {
-          openModal &&  <Animated.View
-          style={{
-            backgroundColor: mode ? "#181A20" : "transparent",
-            zIndex: 21,
-            height: 450,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            position: "absolute",
-          }}
-          exiting={SlideOutDown.springify()}
-          entering={SlideInDown.springify().damping(100)}
-        >
-          <View style={{ flex: 1 }}>
+        </View>
+      </View>
+      <BottomSheet  ref={sheetRef} snapPoints={snapPoints} >
+        <BottomSheetView style={{backgroundColor: mode ? "#181A20" : "transparent",}}>
+          <View
+            style={{
+              zIndex: 21,
+              height: 450,
+            }}
+          >
+            <View style={{ flex: 1 }}>
               <View
                 style={{
                   backgroundColor: mode ? "#181A20" : "white",
@@ -130,26 +148,19 @@ export default function Address({ navigation }: any) {
                   borderTopLeftRadius: 30,
                   borderTopRightRadius: 30,
                 }}
+              ></View>
+              <View
+                style={{
+                  width: "100%",
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  paddingTop: 2,
+                  height: 20,
+                  marginTop: 10,
+                }}
               >
-              </View>
-                  <View
-                    style={{
-                      width: "100%",
-                      flexDirection: "row",
-                      justifyContent: "center",
-                      paddingTop: 2,
-                      height: 20,
-                      marginTop: 10,
-                    }}
-                  >
-                    <TouchableOpacity onPress={()=>setOpenModal(false)}
-                      style={{ width: '100%', flexDirection:'row', justifyContent:'center'}}
-                    >
-                      <View style={{ width: 50, height: 3, backgroundColor: "#E0E0E0" }}>
 
-                      </View>
-                    </TouchableOpacity>
-                  </View>
+              </View>
               <Text
                 style={{
                   textAlign: "center",
@@ -170,28 +181,47 @@ export default function Address({ navigation }: any) {
                     marginVertical: 15,
                   }}
                 ></View>
-                <Text style={{ fontWeight: "bold", fontSize: 18, color: mode ? "white" : "black", }}>
+                <Text
+                  style={{
+                    fontWeight: "bold",
+                    fontSize: 18,
+                    color: mode ? "white" : "black",
+                  }}
+                >
                   Name Address
                 </Text>
                 <View
                   style={{
                     padding: 15,
                     width: "100%",
-                    backgroundColor: mode ? '#1F222A' : '#FAFAFA',
+                    backgroundColor: mode ? "#1F222A" : "#FAFAFA",
                     borderRadius: 15,
                     marginVertical: 15,
                   }}
                 >
-                  <Text style={{ fontWeight: "600", color: mode ? "white" : "black", }}>Apartment</Text>
+                  <Text
+                    style={{
+                      fontWeight: "600",
+                      color: mode ? "white" : "black",
+                    }}
+                  >
+                    Apartment
+                  </Text>
                 </View>
-                <Text style={{ fontWeight: "bold", fontSize: 18, color: mode ? "white" : "black", }}>
+                <Text
+                  style={{
+                    fontWeight: "bold",
+                    fontSize: 18,
+                    color: mode ? "white" : "black",
+                  }}
+                >
                   Address Detalis
                 </Text>
                 <View
                   style={{
                     padding: 15,
                     width: "100%",
-                    backgroundColor: mode ? '#1F222A' : '#FAFAFA',
+                    backgroundColor: mode ? "#1F222A" : "#FAFAFA",
                     borderRadius: 15,
                     marginVertical: 15,
                     flexDirection: "row",
@@ -199,13 +229,22 @@ export default function Address({ navigation }: any) {
                     alignItems: "center",
                   }}
                 >
-                  <Text style={{ fontWeight: "600", color: mode ? "white" : "black", }}>
+                  <Text
+                    style={{
+                      fontWeight: "600",
+                      color: mode ? "white" : "black",
+                    }}
+                  >
                     {city?.region && city.region + ","}{" "}
                     {city?.street && city.street + ","}{" "}
                     {city?.streetNumber && city.streetNumber}
                   </Text>
-                  <TouchableOpacity onPress={()=>getCurrentLocation()}>
-                  <Ionicons name={"location"} size={22} color={mode ? "white" : "black"} />
+                  <TouchableOpacity onPress={() => getCurrentLocation()}>
+                    <Ionicons
+                      name={"location"}
+                      size={22}
+                      color={mode ? "white" : "black"}
+                    />
                   </TouchableOpacity>
                 </View>
                 <View
@@ -216,8 +255,16 @@ export default function Address({ navigation }: any) {
                     marginBottom: 10,
                   }}
                 >
-                  <Checkbox status={"checked"} color={mode ? "white" : "black"} />
-                  <Text style={{ fontWeight: "600", color: mode ? "white" : "black", }}>
+                  <Checkbox
+                    status={"checked"}
+                    color={mode ? "white" : "black"}
+                  />
+                  <Text
+                    style={{
+                      fontWeight: "600",
+                      color: mode ? "white" : "black",
+                    }}
+                  >
                     Make this as the default address
                   </Text>
                 </View>
@@ -225,71 +272,24 @@ export default function Address({ navigation }: any) {
                   style={{
                     width: "100%",
                     paddingVertical: 20,
-                    backgroundColor:  mode ? "white" : "black",
+                    backgroundColor: mode ? "white" : "black",
                     flexDirection: "row",
                     justifyContent: "center",
                     alignItems: "center",
                     borderRadius: 50,
                     marginBottom: 20,
                   }}
-                  onPress={()=> navigation.navigate("Profile")}
+                  onPress={() => navigation.navigate("Profile")}
                 >
-                  <Text style={{  color: mode ? "black" : "white", }}>{t("Add")}</Text>
+                  <Text style={{ color: mode ? "black" : "white" }}>
+                    {t("Add")}
+                  </Text>
                 </TouchableOpacity>
               </View>
             </View>
-        </Animated.View>    
-         }
-         {
-              !openModal &&  <Animated.View
-              style={{
-                backgroundColor: mode ? "#181A20" : "transparent",
-                zIndex: 21,
-                height: 50,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                position: "absolute",
-              }}
-              exiting={SlideOutDown.springify()}
-              entering={SlideInDown.springify().damping(100)}
-            >
-              <View style={{ flex: 1 }}>
-                  <View
-                    style={{
-                      backgroundColor: mode ? "#181A20" : "white",
-                      position: "absolute",
-                      bottom: 0,
-                      left: 0,
-                      right: 0,
-                      top: -20,
-                      borderTopLeftRadius: 30,
-                      borderTopRightRadius: 30,
-                    }}
-                  >
-                    <View
-                      style={{
-                        width: "100%",
-                        flexDirection: "row",
-                        justifyContent: "center",
-                        paddingTop: 2,
-                        height: 20,
-                        marginTop: 10,
-                      }}
-                    >
-                      <TouchableOpacity onPress={()=>setOpenModal(true)}
-                        style={{ width: '100%', flexDirection:'row', justifyContent:'center', paddingVertical:10}}
-                      >
-                        <View style={{ width: 80, height: 3, backgroundColor: "#E0E0E0" }}>
-    
-                        </View>
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-                </View>
-            </Animated.View>    
-         }
-        </View>
-    </View>
+          </View>
+        </BottomSheetView>
+      </BottomSheet>
+    </GestureHandlerRootView>
   );
 }
