@@ -88,7 +88,13 @@ export default function SearchResult({navigation}:any) {
             alignItems: "center",
           }}
         >
-          <Ionicons name={"arrow-back-outline"} size={32} color={mode ? "white" : "black"} />
+             <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Ionicons
+              name={"arrow-back-outline"}
+              size={32}
+              color={mode ? "white" : "black"}
+            />
+          </TouchableOpacity>
           <Text style={{ fontSize: 20, fontWeight: "bold",color: mode ? "white" : "black", }}>Clothers</Text>
         </View>
         <Ionicons name={"search-outline"} size={30} color={mode ? "white" : "black"} />

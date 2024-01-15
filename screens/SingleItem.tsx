@@ -12,13 +12,14 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import { useTranslation } from "react-i18next";
 import { useAppSelector } from "../state/hooks";
 
-export default function SingleItem({ navigation }: any) {
+export default function SingleItem({ navigation, route }: any) {
   const { t } = useTranslation();
   const { mode } = useAppSelector((state) => state.mode);
+  
   return (
     <View style={{ backgroundColor: mode ? "#181A20" : "white", flex: 1 }}>
       <ScrollView>
-        <Slider styles={styles} isGoBack={true} navigation={navigation} />
+        <Slider styles={styles} isGoBack={true} navigation={navigation} carouselData={route.params.images}/>
         <View style={{ paddingHorizontal: 20, marginTop: 20 }}>
           <View
             style={{

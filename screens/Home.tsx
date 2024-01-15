@@ -8,8 +8,9 @@ import {
   StyleSheet,
   ImageBackground,
   FlatList,
+  RefreshControl,
 } from "react-native";
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Slider from "../components/Slider";
 import Icon from "react-native-vector-icons/FontAwesome";
@@ -22,8 +23,14 @@ export default function Home({ navigation }: any) {
   const { user } = useAppSelector((state) => state.user);
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
+  const [refreshLoading, setRefreshLoading] = useState(false);
   const filters = [{ id: 0, name: "All", image: "" }, ...categories];
   const { mode } = useAppSelector((state) => state.mode);
+  const sliderData = [
+    'https://plus.unsplash.com/premium_photo-1703775145710-3882623295b6?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    'https://plus.unsplash.com/premium_photo-1676977396095-07e0648d92df?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    'https://plus.unsplash.com/premium_photo-1677215211005-0305cb45e09f?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+  ]
   useEffect(() => {
     dispatch(getProducts(0));
   }, []);
@@ -40,6 +47,12 @@ export default function Home({ navigation }: any) {
     }
   }
 
+  const onRefresh = useCallback(async () => {
+    setRefreshLoading(true);
+    dispatch(getProducts(0));  
+    setRefreshLoading(false);
+  }, []);
+
   return (
     <View
       style={{
@@ -51,6 +64,9 @@ export default function Home({ navigation }: any) {
       <ScrollView
         showsVerticalScrollIndicator={false}
         showsHorizontalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl refreshing={refreshLoading} onRefresh={onRefresh} />
+        }
       >
         <View
           style={{
@@ -146,7 +162,7 @@ export default function Home({ navigation }: any) {
             {t("See All")}
           </Text>
         </View>
-        <Slider styles={styles} />
+        <Slider styles={styles} carouselData={sliderData}/>
 
         <FlatList
         showsHorizontalScrollIndicator={false}
@@ -235,7 +251,7 @@ export default function Home({ navigation }: any) {
                 <TouchableOpacity
                   key={index}
                   style={{ width: "46%" }}
-                  onPress={() => navigation.navigate("SingleItem")}
+                  onPress={() => navigation.navigate("SingleItem", el)}
                 >
                   <View style={{ width: "100%" }}>
                     <ImageBackground

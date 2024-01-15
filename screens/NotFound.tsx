@@ -5,6 +5,7 @@ import {
   StyleSheet,
   Keyboard,
   TextInput,
+  TouchableOpacity,
 } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import React from "react";
@@ -15,7 +16,6 @@ export default function NotFound({ navigation, route }: any) {
   const { t } = useTranslation();
   const { mode } = useAppSelector((state) => state.mode);
 
-  
   return (
     <View
       style={{
@@ -24,18 +24,30 @@ export default function NotFound({ navigation, route }: any) {
         flex: 1,
       }}
     >
-      {/* <View style={mode ? styles.passwordContainerDark : styles.passwordContainer}>
-        <Ionicons name="search-outline" size={20} color={"silver"} />
-        <TextInput
-          onSubmitEditing={Keyboard.dismiss}
-          style={styles.inputStyle}
-          autoCorrect={false}
-          placeholderTextColor={mode ? 'silver' : 'black'}
-          secureTextEntry={false}
-          placeholder="Search"
-        />
-        <Ionicons name={"options-outline"} size={20} color={mode ? "white" : "black"} />
-      </View> */}
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          marginTop: 55,
+          alignItems: "center",
+        }}
+      >
+        <View
+          style={{
+            flexDirection: "row",
+            gap: 15,
+            alignItems: "center",
+          }}
+        >
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Ionicons
+              name={"arrow-back-outline"}
+              size={32}
+              color={mode ? "white" : "black"}
+            />
+          </TouchableOpacity>
+        </View>
+      </View>
       <View
         style={{
           flexDirection: "row",
@@ -44,10 +56,24 @@ export default function NotFound({ navigation, route }: any) {
           marginVertical: 75,
         }}
       >
-        <Text style={{ fontSize: 15, fontWeight: "bold", color: mode ? "white" : "black", }}>
+        <Text
+          style={{
+            fontSize: 15,
+            fontWeight: "bold",
+            color: mode ? "white" : "black",
+          }}
+        >
           {t("Results for")} "{route.params?.key}"
         </Text>
-        <Text style={{ fontSize: 15, fontWeight: "bold",color: mode ? "white" : "black", }}>0 {t("found")}</Text>
+        <Text
+          style={{
+            fontSize: 15,
+            fontWeight: "bold",
+            color: mode ? "white" : "black",
+          }}
+        >
+          0 {t("found")}
+        </Text>
       </View>
       <Image
         style={{ width: "100%", height: 350 }}
@@ -58,10 +84,22 @@ export default function NotFound({ navigation, route }: any) {
       <View
         style={{ width: "95%", flexDirection: "column", alignItems: "center" }}
       >
-        <Text style={{ fontSize: 25, fontWeight: "bold",color: mode ? "white" : "black", }}>
+        <Text
+          style={{
+            fontSize: 25,
+            fontWeight: "bold",
+            color: mode ? "white" : "black",
+          }}
+        >
           {t("Not Found")}
         </Text>
-        <Text style={{ fontSize: 16, textAlign: "center",color: mode ? "white" : "black", }}>
+        <Text
+          style={{
+            fontSize: 16,
+            textAlign: "center",
+            color: mode ? "white" : "black",
+          }}
+        >
           {t("KeywordDontFound")}
         </Text>
       </View>

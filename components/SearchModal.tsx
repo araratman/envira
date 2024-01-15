@@ -132,7 +132,7 @@ export const SearchModal = React.memo(
                 data={filters}
                 showsVerticalScrollIndicator={false}
                 showsHorizontalScrollIndicator={false}
-                keyExtractor={(item: any) => item.id}
+                keyExtractor={(item: any) => item?.id.toString()}
                 renderItem={({ item }: any) => (
                   <View
                     style={{
@@ -228,7 +228,7 @@ export const SearchModal = React.memo(
                 data={filter1}
                 showsVerticalScrollIndicator={false}
                 showsHorizontalScrollIndicator={false}
-                keyExtractor={({ item }: any) => item}
+                keyExtractor={(item: any) => item.id}
                 renderItem={({ item }: any) => (
                   <View
                     style={{
@@ -248,7 +248,7 @@ export const SearchModal = React.memo(
                         : "white",
                     }}
                   >
-                    <TouchableOpacity onPress={() => setSort(item.id)}>
+                    <TouchableOpacity onPress={() => setSort(item.id * 10)}>
                       <Text
                         style={{
                           fontWeight: "600",
@@ -282,10 +282,10 @@ export const SearchModal = React.memo(
                 data={filterRating}
                 showsVerticalScrollIndicator={false}
                 showsHorizontalScrollIndicator={false}
-                keyExtractor={({ item }: any) => item}
+                keyExtractor={(item: any) => item.id}
                 renderItem={({ item }: any) => (
                   <TouchableOpacity
-                  onPress={()=> setRating(item.id)}
+                    onPress={() => setRating(item.id)}
                     style={{
                       borderWidth: 2,
                       paddingVertical: 5,
